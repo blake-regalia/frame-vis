@@ -1,0 +1,16 @@
+
+frame {
+	
+	class {
+		position: absolute;
+		
+	}
+
+	old {
+		
+	}
+	
+	new {
+		
+	}
+}
