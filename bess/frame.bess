@@ -1,16 +1,30 @@
 
 frame {
+
+	class: frame;
+	frame-old: $class '-old';
+	frame-new: $class '-new';
+
+	box {
+		width: 200px;
+		height: $width * 0.25;
+	}
 	
-	# / class {
-		position: absolute;
-		
+
+	# / [class|=$class] {
+		position: relative;
+
+		width: $box.width;
+		height: $box.height;
 	}
 
-	old {
-		
+
+	# / .$frame-new {
+		border: 1px solid black;
 	}
-	
-	new {
-		
+
+
+	# / .$frame-old {
+		border: 1px solid grey;
 	}
 }
