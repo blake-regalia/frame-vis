@@ -1,7 +1,7 @@
 /
 	bess
 		*.bess
-	js 
+	js
 		kit.*.js
 		util.*.js
 		dom.*.js

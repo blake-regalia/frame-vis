@@ -7,9 +7,8 @@ frame {
 
 	box {
 		width: 200px;
-		height: $width * 0.25;
+		height: 400px;
 	}
-	
 
 	# / [class|=$class] {
 		position: relative;
