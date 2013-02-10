@@ -1,7 +1,8 @@
 /
 	bess
+		app.bess
 		*.bess
-	js 
+	js :merge
 		kit.*.js
 		util.*.js
 		dom.*.js

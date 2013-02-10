@@ -16,7 +16,7 @@ exports.compile = function(tools, rule) {
 	head.merge('\n');
 
 	body.merge();
-	body.pre('<body>');
+	body.pre('</head>\n<body>');
 	body.post('</body>');
 
 	for(var i=targets.length-1; i>=0; i--) {

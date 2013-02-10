@@ -5,21 +5,33 @@ frame {
 	frame-old: $class '-old';
 	frame-new: $class '-new';
 
+	tub / .frames {
+		width: 100%;
+		height: 100%;
+
+		padding-top: 100px;
+	}
+
 	box {
-		width: 200px;
-		height: $width * 0.25;
+		height: 200px;
+		width: ($height * 1.25);
 	}
 	
 
 	# / [class|=$class] {
 		position: relative;
 
+		left: 50%;
 		width: $box.width;
 		height: $box.height;
+
+		margin-left: ($box.width / -2);
+		margin-top: 4px;
 	}
 
 
 	# / .$frame-new {
+
 		border: 1px solid black;
 	}
 
