@@ -31,8 +31,8 @@
 			gcx = d3.scale.linear(),
 			gcy = d3.scale.linear();
 		var svg;
-		var tubWidth = 1024,
-			tubHeight = 600;
+		var tubWidth = $(document).width(), // CSS('ring.tub.width');
+			tubHeight = 600; // CSS('ring.tub.height');
 
 		var radius = {
 			min: 5,

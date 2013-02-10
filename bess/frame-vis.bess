@@ -1,25 +1,30 @@
 
-frame {
+frames {
 
 	class: frame;
 	frame-old: $class '-old';
 	frame-new: $class '-new';
 	frame-img: 'resource/sample.mario.frame';
-	img-ext: {
+	img-ext {
 		png: '.png';
 		gif: '.16.gif';
 	}
 
 	img-dim {
-		width: 384px;
-		height: 311px;
+		width: 280px;
+		height: 200px;
 	}
 
+	height: ($img-dim.height * 3);
+
 	tub / .frames {
+		position: relative;
+
 		width: 100%;
 		height: 100%;
 
-		padding-top: 100px;
+		padding-top: ($img-dim.height * 0.5);
+		z-index: 100;
 	}
 
 	box {
@@ -40,6 +45,7 @@ frame {
 
 	# / .$frame-old {
 		background-image: url($frame-img '-old' $img-ext.png);
+		background-size: 100% 100%;
 		border: 1px solid grey;
 	}
 
@@ -49,11 +55,28 @@ frame {
 
 	# / .$frame-new {
 		background-image: url($frame-img '-new' $img-ext.png);
+		background-size: 100% 100%;
 		border: 1px solid black;
 	}
 
 	# / .$frame-new:hover {
 		background-image: url($frame-img '-new' $img-ext.gif);
+	}
+
+}
+
+
+
+ring {
+	
+	tub / .rings {
+		position: absolute;
+
+		top: 0;
+		left: 0;
+
+		width: 100%;
+		height: $frames.height;
 	}
 
 }
