@@ -16,7 +16,6 @@ frame {
 		height: 200px;
 		width: ($height * 1.25);
 	}
-	
 
 	# / [class|=$class] {
 		position: relative;
