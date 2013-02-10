@@ -25,94 +25,117 @@
 		* private:
 		**/
 		var data = [];
+		var dataSize = 16;
 		var blobs = {};
 		var plot = [];
 		var gcx, gcy;
 			gcx = d3.scale.linear(),
 			gcy = d3.scale.linear();
 		var svg;
-		var tubWidth = $(document).width(), // CSS('ring.tub.width');
-			tubHeight = 600; // CSS('ring.tub.height');
+		var tubWidth = $(document).width(), // CSS('ring.tub.width').px();
+			tubHeight = 600; // CSS('ring.tub.height').px();
+
+		var pixelCount = 0;
 
 		var radius = {
 			min: 5,
 			max: 25
 		};
 
-		// construct the data and plot values
-		(function() {
-			var ri, gi, bi;
-			ri = gi = bi = 256 / 2;
-			var rbu = ri*0.5,
-				gbu = gi*0.5,
-				bbu = bi*0.5;
-			for(var r=0; r<256; r+=ri) {
-				for(var g=0; g<256; g+=gi) {
-					for(var b=0; b<256; b+=bi) {
-						// upper-bound color vaues
-						var ubr = r+rbu, ubg = g+gbu, ubb = b+bbu;
 
-						// median color value
-						var mr = (r+ubr) * 0.5,
-							mg = (g+ubg) * 0.5,
-							mb = (b+ubb) * 0.5;
+		// takes an array of rgb values and quantizes them into dataSize groups
+		var quantize = function(rgb) {
+			var cmap = MMCQ.quantize(rgb, dataSize);
+			return {
+				palette: cmap.palette(),
+				map: function() {
+					return rgb.map(function(p) { 
+			    		return cmap.map(p); 
+					});
+				},
+			};
+		};
 
-						var h = function(c) {
-							return (c<10?'0':'')+c.toString(16);
-						};
-
-						// lower and upper color values
-						var lower = '#'+h(r)+h(g)+h(b);
-						var upper = '#'+h(ubr)+h(ubg)+h(ubb);
-
-						// Color.hsl(hueA, minSat, minLit);
-						// Color.hsl(hueB, max)
-
-						// get the next id
-						var id = data.length;
-
-						// append this id to the data array
-						data.push(id);
-
-						// reference this blob
-						blobs[id] = {
-							lower: lower,
-							upper: upper,
-						};
-					}
+		// grab the rgb arrays from the images
+		var getRgbArray = function(src, fn) {
+			var cv = document.createElement('canvas');
+			var g = cv.getContext('2d');
+			var img = new Image();
+			img.onload = function() {
+				cv.width = this.width;
+				cv.height = this.height;
+				g.drawImage(this, 0, 0);
+				var data = g.getImageData(0, 0, this.width, this.height).data;
+				var rgb = [];
+				for(var i=0; i<data.length; i+=4) {
+					rgb.push([
+						data[i], data[i+1], data[i+2]
+					]);
 				}
+				pixelCount = rgb.length;
+				fn(rgb);
+			};
+			img.src = src;
+		};
+
+		// quantize the rgb array and count the pixel groups
+		var processImg = function(rgb) {
+			var results = quantize(rgb);
+
+			var quants = results.map();
+			var colorMap = [];
+			for(var i=0; i<quants.length; i++) {
+				var color = Color.apply(Color, quants[i]).hexTriplet();
+				if(!colorMap[color]) colorMap[color] = 0;
+				colorMap[color] += 1;
 			}
-		})();
+
+			constructBlobs(colorMap);
+		};
+
+		//
+		var constructBlobs = function(map) {
+
+			for(var e in map) {
+				// get the next id
+				var id = data.length;
+
+				// append this id to the data array
+				data.push(id);
+
+				// create the blob
+				blobs[id] = {
+					color: e,
+					count: map[e],
+				};
+			}
+
+			constructDom();
+		};
+
+		var r, d_theta, ox,
+			cosx, siny;
 
 		// construct the dom for this object
-		(function() {
-			var r = Math.min(tubWidth, tubHeight)*0.5 - radius.max;
-			var d_theta = (Math.PI*2) / data.length;
-			var ox = tubWidth*.5, oy = tubHeight*.5;
-			var cosx = function(d, i) {
+		var constructDom = function() {
+
+			// sets the distance of this ring
+			r = Math.min(tubWidth, tubHeight)*0.5 - radius.max;
+			d_theta = (Math.PI*2) / data.length;
+			ox = tubWidth*.5, oy = tubHeight*.5;
+
+			cosx = function(d, i) {
 				return ox + r * Math.cos(i*d_theta);
 			};
-			var siny = function(d, i) {
+			siny = function(d, i) {
 				return oy + r * Math.sin(i*d_theta);
 			};
+
 			var genFill = function(d, i) {
-				var gradientId = 'blob-'+i;
-				var lg = svg.append('linearGradient')
-					.attr('x1','0%')
-					.attr('y1','0%')
-					.attr('x2','100%')
-					.attr('y2','100%')
-					.attr('id', gradientId);
-
-				lg.append('stop')
-					.attr('offset','0%')
-					.attr('stop-color', blobs[d].lower);
-
-				lg.append('stop')
-					.attr('offset','100%')
-					.attr('stop-color', blobs[d].upper);
-
-				return 'url(#'+gradientId+')';
+				return blobs[d].color;
+			};
+			var getBlobRadius = function(d, i) {
+				return (blobs[d].count / pixelCount) * 180;
 			};
 
 			svg = d3.select(qs).append('svg')
@@ -123,13 +146,25 @@
 				.data(data)
 				.enter().append('circle')
 					.attr('class', 'blob')
-					.attr('r', 12)
+					.attr('r', getBlobRadius)
 					.attr('cx', cosx)
 					.attr('cy', siny)
 					.style('fill', genFill);
 
-		})();
-		
+			setTimeout(updateBlobs, 2000);
+		};
+
+		var updateBlobs = function() {
+			r += 120;
+			svg.selectAll('.blob')
+				.transition()
+					.attr('cx', cosx)
+					.attr('cy', siny);
+		};
+
+
+		// process frame-old
+		getRgbArray('resource/sample.mario.frame-old.png', processImg);
 		
 		/**
 		* public operator() ();

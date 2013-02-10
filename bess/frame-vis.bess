@@ -34,6 +34,7 @@ frames {
 
 	# / [class|=$class] {
 		position: relative;
+		display: block;
 
 		left: 50%;
 		width: $box.width;
@@ -46,7 +47,7 @@ frames {
 	# / .$frame-old {
 		background-image: url($frame-img '-old' $img-ext.png);
 		background-size: 100% 100%;
-		border: 1px solid grey;
+		border: 1px solid red;
 	}
 
 	# / .$frame-old:hover {
@@ -56,7 +57,7 @@ frames {
 	# / .$frame-new {
 		background-image: url($frame-img '-new' $img-ext.png);
 		background-size: 100% 100%;
-		border: 1px solid black;
+		border: 1px solid green;
 	}
 
 	# / .$frame-new:hover {
