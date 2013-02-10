@@ -4,6 +4,7 @@ frame {
 	class: frame;
 	frame-old: $class '-old';
 	frame-new: $class '-new';
+	frame-img: 'resource/sample.mario.frame';
 
 	tub / .frames {
 		width: 100%;
@@ -28,9 +29,9 @@ frame {
 		margin-top: 4px;
 	}
 
-
 	# / .$frame-new {
-
+		background-image: url($frame-img '-old.png');
+		background-image: url($frame-img '-new.png');
 		border: 1px solid black;
 	}
 
