@@ -11,4 +11,4 @@
 		any.pre.html :head
 		index.body.zen.html :zen
 
-/resource  :static
+/resource/*  :static

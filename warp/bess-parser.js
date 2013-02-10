@@ -339,6 +339,20 @@ case 93:
 			this.$ = strip($$[$0]);
 		
 break;
+case 96:
+			this.$ = {
+				isPseudo: true,
+				value: $$[$0],
+			};
+		
+break;
+case 98:
+			this.$ = {
+				isCall: true,
+				arg: $$[$0-2],
+			};
+		
+break;
 case 99:
 			this.$ = $$[$0];
 			this.$.push($$[$0-1]);
@@ -912,6 +926,9 @@ function resolveSelectorTarget(trgt, scope) {
 	}
 	else if(trgt.isIdPrefix) {
 		return '#'+expr;
+	}
+	else if(trgt.isPseudo) {
+		return ':'+expr;
 	}
 	else if(trgt.op) {
 		return '['
