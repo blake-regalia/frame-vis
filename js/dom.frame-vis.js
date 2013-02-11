@@ -155,7 +155,7 @@
 		};
 
 		var updateBlobs = function() {
-			r += 120;
+			 // r += 120;
 			svg.selectAll('.blob')
 				.transition()
 					.attr('cx', cosx)
